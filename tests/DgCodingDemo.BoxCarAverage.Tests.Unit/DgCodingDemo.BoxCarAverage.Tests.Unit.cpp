@@ -10,7 +10,7 @@ namespace DgCodingDemoBoxCarAverageTestsUnit
 	TEST_CLASS(DgCodingDemoBoxCarAverageTestsUnit)
 	{
 	public:
-		
+
 		TEST_METHOD(Should_Calculate_BoxCarAverage_For_Problem_Example)
 		{
 			std::array<int, 10> input = { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } };
