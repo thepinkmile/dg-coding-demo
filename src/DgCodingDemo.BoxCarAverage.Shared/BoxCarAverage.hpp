@@ -38,19 +38,19 @@ public:
 		std::array<TArrayType, TArraySize> output {};
 
 		// perform calculations for sets under the desired frame size
-		TArrayType currentSum = 0;
-		size_t currentFrameSize = 0;
-		for (size_t i = 0; i < std::min<size_t>(TFrameSize, TArraySize); ++i)
+		TArrayType currentSum {};
+		constexpr size_t initialFrameDataSize = std::min(TFrameSize, TArraySize);
+		for (size_t i = 0; i < initialFrameDataSize; ++i)
 		{
-			output[i] = CalculateIitialDataPoint(currentSum, input[i], currentFrameSize);
+			output[i] = CalculateDataPoint(currentSum, input[i], i + 1);
 		}
 
-		if (TArraySize > TFrameSize)
+		if (TArraySize > initialFrameDataSize)
 		{
 			// perform calculations for all remaining data
-			for (size_t i = TFrameSize; i < TArraySize; ++i)
+			for (size_t i = initialFrameDataSize; i < TArraySize; ++i)
 			{
-				output[i] = CalculateTailDataPoint(currentSum, input[i], input[i - TFrameSize]);
+				output[i] = CalculateDataPoint(currentSum, input[i] - input[i - initialFrameDataSize], TFrameSize);
 			}
 		}
 
@@ -61,18 +61,9 @@ private:
 	BoxCarAverage() {}
 	bool operator==(const BoxCarAverage& other) const = default;
 
-	static inline TArrayType DesiredFrameSize = static_cast<TArrayType>(TFrameSize);
-
-	static inline TArrayType CalculateIitialDataPoint(TArrayType& currentSum, const TArrayType& newValue, size_t& currentFrameSize)
+	static inline TArrayType CalculateDataPoint(TArrayType& currentSum, const TArrayType& newValue, const TArrayType& currentFrameSize)
 	{
 		currentSum += newValue;
-		++currentFrameSize;
-		return currentSum / static_cast<TArrayType>(currentFrameSize);
-	}
-
-	static inline TArrayType CalculateTailDataPoint(TArrayType& currentSum, const TArrayType& newValue, const TArrayType& overflowValue)
-	{
-		currentSum += newValue - overflowValue;
-		return currentSum / DesiredFrameSize;
+		return currentSum / currentFrameSize;
 	}
 };
